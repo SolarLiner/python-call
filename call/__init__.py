@@ -55,7 +55,7 @@ class Call:
 
     def catch(self, callback):
         # type: (Thenable) -> Call
-        """Chain callback, called if a failure occured somewhere in the chain before this.
+        """Chain callback, called if a failure occurred somewhere in the chain before this.
 
         :param callback: Callback function, called on error further up the chain."""
         def cb(resolve, reject):
