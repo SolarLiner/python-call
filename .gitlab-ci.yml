@@ -69,6 +69,8 @@ build:py3:
 test:
   image: python:3.7
   stage: test
+  variables:
+    VERSIONS: 2.7.15 3.5.5 3.6.6 3.7.0
   before_script:
   # Install pyenv
   - apt-get update -qq
@@ -80,7 +82,7 @@ test:
   - eval "$(pyenv init -)"
   - . venv/bin/activate
   script:
-  - pyenv install 2.7.15 3.5.5 3.6.6 3.7.0
+  - setopt shwordsplit; for v in $VERSIONS; do pyenv install $v -s; done; unsetopt shwordsplit;
   - pyenv local 2.7.15 3.5.5 3.6.6 3.7.0
   - tox
   artifacts:
