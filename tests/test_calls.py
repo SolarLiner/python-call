@@ -10,17 +10,17 @@ from call import Call
 
 # noinspection PyMethodMayBeStatic
 class TestCall(unittest.TestCase):
-    def callback_succeeds(self, resolve, reject):
+    def callback_succeeds(self, resolve, _):
         resolve('Data')
 
-    def callback_rejects(self, resolve, reject):
+    def callback_rejects(self, _, reject):
         reject('Fail')
 
-    def callback_resolves_delay(self, resolve, reject):
+    def callback_resolves_delay(self, resolve, _):
         time.sleep(2)
         resolve('Data')
 
-    def callback_rejects_delay(self, resolve, reject):
+    def callback_rejects_delay(self, _, reject):
         time.sleep(2)
         reject('Fail')
 
