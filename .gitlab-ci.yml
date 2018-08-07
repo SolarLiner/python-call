@@ -8,8 +8,7 @@ build:py2:
   stage: build
   image: python:2.7-alpine
   before_script:
-    - pip install wheel strip-hints
-    - strip-hints call/__init__.py > call/__init__.py
+    - pip install wheel
   script:
     - pip wheel .
   artifacts:
@@ -32,8 +31,7 @@ test:py2:
   stage: build
   image: python:2.7-alpine
   before_script:
-    - pip install nose strip-hints
-    - strip-hints call/__init__.py > call/__init__.py
+    - pip install nose
   script:
     - nosetests tests
   artifacts:
