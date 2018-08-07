@@ -18,13 +18,16 @@ class Call:
     RESOLVED = 'RESOLVED'
     REJECTED = 'REJECTED'
 
-    def __init__(self, callback: Callback):
+    def __init__(self, callback):
+        # type: (Callback) -> Call
         self.status = self.PENDING
-        self.chain = []
+        self.data = None    # type: T
+        self.error = None   # type: E
         self.t = Thread(target=callback, args=(self._on_resolve, self._on_rejected))
         self.t.start()
 
-    def then(self, callback: Thenable):
+    def then(self, callback):
+        # type: (Thenable) -> Call
         def cb(resolve: Callable, reject: Callable):
             self.t.join()
             if self.status == self.REJECTED:
@@ -38,7 +41,8 @@ class Call:
 
         return Call(cb)
 
-    def catch(self, callback: Thenable):
+    def catch(self, callback):
+        # type: (Thenable) -> Call
         def cb(resolve, reject):
             self.t.join()
             if self.status == self.REJECTED:
@@ -51,6 +55,7 @@ class Call:
         return Call(cb)
 
     def wait(self):
+        # type: () -> T
         self.t.join()
         if self.status == self.RESOLVED:
             return self.data
@@ -61,22 +66,27 @@ class Call:
                 raise Exception(self.error)
 
     def join(self):
+        # type: () -> None
         self.t.join()
 
     @classmethod
-    def resolve(cls, value: T):
+    def resolve(cls, value):
+        # type: (T) -> Call
         return Call(lambda res, rej: res(value))
 
     @classmethod
-    def reject(cls, error: E):
+    def reject(cls, error):
+        # type: (E) -> Call
         return Call(lambda res, rej: rej(error))
 
-    def _on_resolve(self, data: T):
+    def _on_resolve(self, data):
+        # type: (T) -> None
         self.data = data
         self.error = None
         self.status = self.RESOLVED
 
-    def _on_rejected(self, error: E):
+    def _on_rejected(self, error):
+        # type: (E) -> None
         self.error = error
         self.data = None
         self.status = self.REJECTED
