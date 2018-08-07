@@ -38,7 +38,8 @@ class Call:
         """Chain callback, called with the resolved value of the previous Call.
 
         :param callback: Callback function to be called with the resolved value of the current Call."""
-        def cb(resolve: Callable, reject: Callable):
+        def cb(resolve, reject):
+            # type: (Callable, Callable) -> None
             self.t.join()
             if self.status == self.REJECTED:
                 reject(self.error)
