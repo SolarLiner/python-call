@@ -44,10 +44,6 @@ test:py2:
     - python -V
   script:
     - nosetests tests
-  artifacts:
-    paths:
-      - .coverage
-    expire_in: 1 hour
 
 test:py3:
   stage: build
