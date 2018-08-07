@@ -1,6 +1,8 @@
 Call
 ====
 
+.. image:: https://api.codacy.com/project/badge/Grade/91959f98ff34469884415e96ba2ff763    :target: https://www.codacy.com/app/solarliner/call?utm_source=gitlab.com&amp;utm_medium=referral&amp;utm_content=solarliner/call&amp;utm_campaign=Badge_Grade
+
 Thread-based, JS-like asynchronous calls for Python. Works in both
 Python 2.7 and Python 3.5+.
 
