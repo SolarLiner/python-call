@@ -96,7 +96,7 @@ codacy:
   dependencies:
     - test:py3
   before_script:
-    - pip install codacy-coverage
+    - pip install codacy-coverage coverage
   script:
     - coverage xml
     - python-codacy-coverage -r coverage.xml
