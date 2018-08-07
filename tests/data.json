@@ -1,0 +1,31 @@
+{
+    "app-id": "org.sindresorhus.Caprine",
+    "branch": "stable",
+    "base": "io.atom.electron.BaseApp",
+    "base-version": "stable",
+    "runtime": "org.freedesktop.Platform",
+    "runtime-version": "1.6",
+    "sdk": "org.freedesktop.Sdk",
+    "command": "caprine",
+    "separate-locales": false,
+    "tags": ["messenger", "electron", "open-source"],
+    "finish-args": [
+        "--share=ipc",
+        "--socket=pulseaudio",
+        "--share=network",
+        "--device=dri",
+        "--talk-name=org.gnome.SettingsDaemon",
+        "--talk-name=org.freedesktop.Notifications",
+        "--talk-name=org.gnome.SessionManager",
+        "--env=LD_LIBRARY_PATH=/app/lib"
+    ],
+    "modules": [
+        {
+            "name": "caprine",
+            "sources": {
+                "type": "git",
+                "url":
+            }
+        }
+    ]
+}

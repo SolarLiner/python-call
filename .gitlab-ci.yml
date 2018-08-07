@@ -1,0 +1,118 @@
+image: python:3.7-alpine
+
+cache:
+  key: $CI_COMMIT_REF
+  paths:
+    - .cache
+
+variables:
+  PIP_DOWNLOAD_CACHE: .cache
+
+stages:
+  - build
+  - dist
+
+build:py2:
+  stage: build
+  image: python:2.7.15-alpine
+  before_script:
+    - pip install wheel
+    - python -V
+  script:
+    - pip wheel .
+    - mkdir -p dist
+    - mv *.whl dist
+  artifacts:
+    paths:
+      - dist
+    name: Python 2
+
+build:py3:
+  stage: build
+  before_script:
+    - pip install wheel
+  script:
+    - pip wheel .
+    - mkdir -p dist
+    - mv *.whl dist
+  artifacts:
+    paths:
+      - dist
+    name: Python 3
+
+test:py2:
+  stage: build
+  image: python:2.7-alpine
+  before_script:
+    - pip install nose typing
+    - python -V
+  script:
+  - nosetests -v tests
+
+test:py3:
+  stage: build
+  before_script:
+    - pip install nose coverage
+  script:
+  - nosetests -v --with-coverage --cover-package=call tests
+  artifacts:
+    paths:
+      - .coverage
+    expire_in: 1 hour
+
+dist-test:
+  stage: dist
+  dependencies:
+    - build:py2
+    - build:py3
+  variables:
+    GIT_STRATEGY: none
+  before_script:
+    - pip install twine
+  script:
+    - >
+      twine upload dist/*.whl
+      --repository-url https://test.pypi.org/legacy/
+      -u $PIP_UPLOAD_USER
+      -p $PIP_UPLOAD_TEST_PASSWD
+  except:
+    - master
+
+dist:
+  stage: dist
+  dependencies:
+    - build:py2
+    - build:py3
+  variables:
+    GIT_STRATEGY: none
+  before_script:
+    - pip install twine
+  script:
+    - twine upload dist/*.whl -u $PIP_UPLOAD_USER -p $PIP_UPLOAD_PASSWD
+  only:
+    - master
+pages:
+  stage: dist
+  dependencies:
+    - test:py3
+  before_script:
+    - pip install coverage
+  script:
+    - coverage html
+  after_script:
+    - mv htmlcov public
+  artifacts:
+    paths:
+      - public
+    expire_in: 1 hour
+
+codacy:
+  stage: dist
+  dependencies:
+    - test:py3
+  before_script:
+    - apk add git
+    - pip install codacy-coverage coverage
+  script:
+    - coverage xml
+    - python-codacy-coverage -r coverage.xml
