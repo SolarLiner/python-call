@@ -9,7 +9,12 @@ Python 2.7 and Python 3.5+.
 Install
 -------
 
-You will be soon able to install through pypi.
+Release version:
+
+.. code:: bash
+	pip install call
+
+Development version
 
 .. code:: bash
 
@@ -72,3 +77,11 @@ Wait for call to either resolve or reject. Note that it is not recommended to ge
 
     call.join()
     result = call.data  # Not recommended
+
+Contribute
+----------
+
+The repository follows the ``git flow`` standards. Create a feature branch, then ask for a pull/merge request.
+
+The main repository is on GitLab, however the GitHub mirror is functional and you should be able to ask for pull
+requests. However, they will be processed in GitLab.

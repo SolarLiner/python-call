@@ -1,5 +1,5 @@
-import unittest
 import sys
+import unittest
 
 from setuptools import setup
 
@@ -23,7 +23,7 @@ def test_suite():
 
 setup(
     name='call',
-    version='0.1',
+    version='0.1.1',
     packages=['call'],
     url='https://gitlab.com/solarliner/call',
     license='MIT',

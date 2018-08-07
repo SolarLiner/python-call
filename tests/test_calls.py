@@ -66,34 +66,33 @@ class TestCall(unittest.TestCase):
             call.wait()
             self.fail('Call should fail')
 
-    def test_all_class(self):
-        def cb(res, rej):
+    def test_real_world_example(self):
+        def cb(res, _):
             with open(os.path.join(os.path.dirname(__file__), 'data.json')) as f:
-                if not f.readable():
-                    rej('File not readable')
                 res(f.read())
 
         call = Call(cb) \
             .then(lambda data: json.loads(data)) \
             .then(lambda data: data['app-id']) \
-            .catch(lambda err: err)
+            .catch(lambda err: 'Whoops')
         call.then(print)
         try:
             value = call.wait()
-        except Exception as e:
-            self.fail('Call.wait shouldn\'t throw as it is being caught')
+        except Exception:
+            self.fail('Call.wait shouldn\'t throw as it is being caught in the chain')
 
-        self.assertNotEqual(value, 'org.sindresorhus.Caprine')
-        self.assertTrue(isinstance(value, Exception))
+        self.assertEqual(value, 'Whoops')
 
     def test_all(self):
         calls = []
         for i in range(10):
             def func():
+                _i = i
                 time.sleep(2 + random.random())
-                return i
+                return _i
 
             calls.append(Call.from_function(func))
+            time.sleep(.2)  # Wait before going to next iteration
 
         results = Call.all(calls).wait()
         for i in range(10):

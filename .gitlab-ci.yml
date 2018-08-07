@@ -47,14 +47,14 @@ test:py2:
     - pip install nose typing
     - python -V
   script:
-    - nosetests tests
+  - nosetests -v tests
 
 test:py3:
   stage: build
   before_script:
     - pip install nose coverage
   script:
-    - nosetests --with-coverage --cover-package=call tests
+  - nosetests -v --with-coverage --cover-package=call tests
   artifacts:
     paths:
       - .coverage
