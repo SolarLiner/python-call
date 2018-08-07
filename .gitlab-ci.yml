@@ -1,16 +1,42 @@
 image: python:3.7-alpine
 
 cache:
-  key: $CI_COMMIT_REF
+  key: $CI_COMMIT_REF_NAME
   paths:
     - .cache
+  policy: pull
 
 variables:
   PIP_DOWNLOAD_CACHE: .cache
 
 stages:
+- cache
   - build
+- test
   - dist
+
+virtualenv:
+  stage: cache
+  allow_failure: true
+  before_script:
+  - |
+    if [ ! -f "venv/last_commit_sha" ]; then
+      LAST_COMMIT=$(git log --oneline --reverse | head -n 1 | awk '{print $1};');
+    else
+      LAST_COMMIT=$(cat "venv/last_commit_sha");
+    fi
+    CURR_COMMIT=$(git rev-parse HEAD)
+    git diff --name-only ${LAST_COMMIT} ${CURR_COMMIT} | grep "Pipfile"
+  script:
+  - pip install pipenv
+  - |
+    if [ ! -d "venv" ]; then
+      virtualenv venv
+    fi
+  - . venv/bin/activate
+  - pipenv install --dev
+  cache:
+    policy: pull-push
 
 build:py2:
   stage: build
