@@ -69,8 +69,6 @@ class TestCall(unittest.TestCase):
     def test_realworld_example(self):
         def cb(res, rej):
             with open(os.path.join(os.path.dirname(__file__), 'data.json')) as f:
-                if not f.readable():
-                    rej('File not readable')
                 res(f.read())
 
         call = Call(cb) \
@@ -83,7 +81,7 @@ class TestCall(unittest.TestCase):
         except Exception as e:
             self.fail('Call.wait shouldn\'t throw as it is being caught')
 
-        self.assertNotEqual(value, 'org.sindresorhus.Caprine')
+        self.assertIsNone(value)
         self.assertTrue(isinstance(value, Exception))
 
     def test_all(self):
