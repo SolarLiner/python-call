@@ -1,5 +1,5 @@
 from threading import Thread
-from typing import Callable, Any, TypeVar, Optional
+from typing import Callable, Any, TypeVar, Optional, GenericMeta
 from typing import Iterable
 
 __all__ = ['Call']
@@ -14,8 +14,13 @@ Rejectable = Callable[[E], None]
 Callback = Callable[[Callable, Callable], Any]
 
 
+class CallMeta(GenericMeta):
+    pass
+
+
 class Call:
     """Asynchronously run code, letting further code subscribe to resolved values or failed exceptions."""
+    __metaclass__ = CallMeta
     PENDING = 'PENDING'
     RESOLVED = 'RESOLVED'
     REJECTED = 'REJECTED'
@@ -29,8 +34,8 @@ class Call:
 
         :param callback: Callback function. Must have (resolve, reject) functions."""
         self.status = self.PENDING
-        self.data = None    # type: T
-        self.error = None   # type: E
+        self.data = None  # type: T
+        self.error = None  # type: E
         self.t = Thread(target=callback, args=(self._on_resolve, self._on_rejected))
         self.t.start()
 
@@ -39,6 +44,7 @@ class Call:
         """Chain callback, called with the resolved value of the previous Call.
 
         :param callback: Callback function to be called with the resolved value of the current Call."""
+
         def cb(resolve, reject):
             # type: (Callable, Callable) -> None
             self.t.join()
@@ -58,6 +64,7 @@ class Call:
         """Chain callback, called if a failure occurred somewhere in the chain before this.
 
         :param callback: Callback function, called on error further up the chain."""
+
         def cb(resolve, reject):
             self.t.join()
             if self.status == self.REJECTED:
@@ -131,12 +138,14 @@ class Call:
         :param func: Synchronous function to be called
         :param args: Positional arguments to be passed to the function func
         :param kwargs: Dictionary arguments to be passed to the function func"""
+
         def cb(resolve, reject):
             # type: (Callable, Callable) -> None
             try:
                 resolve(func(*args, **kwargs))
             except Exception as e:
                 reject(e)
+
         return Call(cb)
 
     def _on_resolve(self, data):
