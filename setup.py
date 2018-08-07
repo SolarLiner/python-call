@@ -1,6 +1,14 @@
 import unittest
+import sys
 
 from setuptools import setup
+
+
+def get_requirements():
+    requirements = []   # TODO: Get from Pipfile
+    if sys.version_info[0] == 2:
+        requirements.append('typing')
+    return requirements
 
 
 def readme():
@@ -22,6 +30,7 @@ setup(
     author='Nathan Graule',
     author_email='solarliner@gmail.com',
     description='Thread-based, JS-like asynchronous calls for Python.',
+    install_requires=get_requirements(),
     long_description=readme(),
     classifiers=[
         'Development Status :: 3 - Alpha',
