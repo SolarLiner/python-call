@@ -72,6 +72,8 @@ pages:
   stage: dist
   dependencies:
     - test:py3
+  variables:
+    GIT_STRATEGY: none
   before_script:
     - pip install coverage
   script:
