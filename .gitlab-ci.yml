@@ -86,3 +86,13 @@ pages:
     paths:
       - public
     expire_in: 1 hour
+
+codacy:
+  stage: dist
+  dependencies:
+    - test:py3
+  before_script:
+    - pip install codacy-coverage
+  script:
+    - coverage xml
+    - python-codacy-coverage -r coverage.xml
