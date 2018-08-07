@@ -2,6 +2,7 @@ from __future__ import print_function
 
 import json
 import os
+import random
 import time
 import unittest
 
@@ -84,3 +85,16 @@ class TestCall(unittest.TestCase):
 
         self.assertNotEqual(value, 'org.sindresorhus.Caprine')
         self.assertTrue(isinstance(value, Exception))
+
+    def test_all(self):
+        calls = []
+        for i in range(10):
+            def func():
+                time.sleep(2 + random.random())
+                return i
+
+            calls.append(Call.from_function(func))
+
+        results = Call.all(calls).wait()
+        for i in range(10):
+            self.assertEqual(results[i], i)

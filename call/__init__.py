@@ -1,5 +1,6 @@
 from threading import Thread
 from typing import Callable, Any, TypeVar, Optional
+from typing import Iterable
 
 __all__ = ['Call']
 
@@ -102,6 +103,24 @@ class Call:
         if not isinstance(error, Exception):
             error = Exception(error)
         return Call(lambda res, rej: rej(error))
+
+    @classmethod
+    def all(cls, calls):
+        # type: (Iterable[Call]) -> Call
+        """Resolve a list of calls' resolved values, or fail with the first exception
+
+        :param calls: List of calls to resolve, in the same order than the Calls list"""
+
+        def func():
+            values = []
+            try:
+                for call in calls:
+                    values.append(call.wait())
+            except Exception:
+                raise
+            return values
+
+        return Call.from_function(func)
 
     @classmethod
     def from_function(cls, func, *args, **kwargs):
