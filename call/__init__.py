@@ -14,12 +14,19 @@ Callback = Callable[[Callable, Callable], Any]
 
 
 class Call:
+    """Asynchronously run code, letting further code subscribe to resolved values or failed exceptions."""
     PENDING = 'PENDING'
     RESOLVED = 'RESOLVED'
     REJECTED = 'REJECTED'
 
     def __init__(self, callback):
         # type: (Callback) -> Call
+        """Initialize a new asynchronous Call.
+        The callback must have signature (resolve, reject), which are two callback functions of their own; the first one
+        is to be called with the resulting value, while the second one is to be called with an error.
+        It is vividly recommended that the value in reject be an Exception.
+
+        :param callback: Callback function. Must have (resolve, reject) functions."""
         self.status = self.PENDING
         self.data = None    # type: T
         self.error = None   # type: E
@@ -28,6 +35,9 @@ class Call:
 
     def then(self, callback):
         # type: (Thenable) -> Call
+        """Chain callback, called with the resolved value of the previous Call.
+
+        :param callback: Callback function to be called with the resolved value of the current Call."""
         def cb(resolve: Callable, reject: Callable):
             self.t.join()
             if self.status == self.REJECTED:
@@ -43,6 +53,9 @@ class Call:
 
     def catch(self, callback):
         # type: (Thenable) -> Call
+        """Chain callback, called if a failure occured somewhere in the chain before this.
+
+        :param callback: Callback function, called on error further up the chain."""
         def cb(resolve, reject):
             self.t.join()
             if self.status == self.REJECTED:
@@ -56,6 +69,7 @@ class Call:
 
     def wait(self):
         # type: () -> T
+        """Wait until call has resolved a value to return, or rejected to raise the exception."""
         self.t.join()
         if self.status == self.RESOLVED:
             return self.data
@@ -67,26 +81,37 @@ class Call:
 
     def join(self):
         # type: () -> None
+        """Wait until the value has been resolved or rejected, but does not return the value nor raise."""
         self.t.join()
 
     @classmethod
     def resolve(cls, value):
-        # type: (T) -> Call
+        # type: (Optional[T]) -> Call
+        """Create a Call that immediately resolves with the value
+
+        :param value: Value to be resolved to"""
         return Call(lambda res, rej: res(value))
 
     @classmethod
     def reject(cls, error):
         # type: (E) -> Call
+        """Create a Call that immediately rejects with the error
+
+        :param error: Error to be passed. If not an exception, will be turned into one."""
+        if not isinstance(error, Exception):
+            error = Exception(error)
         return Call(lambda res, rej: rej(error))
 
     def _on_resolve(self, data):
         # type: (T) -> None
+        """DO NOT USE. IS INTERNAL"""
         self.data = data
         self.error = None
         self.status = self.RESOLVED
 
     def _on_rejected(self, error):
         # type: (E) -> None
+        """DO NOT USE. IS INTERNAL"""
         self.error = error
         self.data = None
         self.status = self.REJECTED
