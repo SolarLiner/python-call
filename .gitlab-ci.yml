@@ -21,7 +21,7 @@ build:py2:
   script:
     - pip wheel .
     - mkdir -p dist
-    - mv *.whl dist
+    - mv async_call*.whl dist
   artifacts:
     paths:
       - dist
@@ -34,7 +34,7 @@ build:py3:
   script:
     - pip wheel .
     - mkdir -p dist
-    - mv *.whl dist
+    - mv async_call*.whl dist
   artifacts:
     paths:
       - dist
