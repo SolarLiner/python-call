@@ -3,7 +3,7 @@ from distutils.core import setup
 setup(
     name='call',
     version='0.1',
-    packages=['call', 'tests'],
+    packages=['call'],
     url='',
     license='MIT',
     author='Nathan Graule',
