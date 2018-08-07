@@ -9,7 +9,12 @@ Python 2.7 and Python 3.5+.
 Install
 -------
 
-You will be soon able to install through pypi.
+Release version:
+
+.. code:: bash
+	pip install call
+
+Development version
 
 .. code:: bash
 
