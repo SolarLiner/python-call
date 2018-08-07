@@ -1,12 +1,12 @@
 from threading import Thread
-from typing import Callable, Any, TypeVar, Optional, GenericMeta
+from typing import Callable, Any, TypeVar, Optional, Generic, List
 from typing import Iterable
 
 __all__ = ['Call']
 
 T = TypeVar('T')
 TT = TypeVar('TT')
-E = TypeVar('E')
+E = TypeVar('E', bound=Exception)
 
 Thenable = Callable[[T], TT]
 Resolvable = Callable[[T], None]
@@ -14,19 +14,14 @@ Rejectable = Callable[[E], None]
 Callback = Callable[[Callable, Callable], Any]
 
 
-class CallMeta(GenericMeta):
-    pass
-
-
-class Call:
+class Call(Generic[T]):
     """Asynchronously run code, letting further code subscribe to resolved values or failed exceptions."""
-    __metaclass__ = CallMeta
     PENDING = 'PENDING'
     RESOLVED = 'RESOLVED'
     REJECTED = 'REJECTED'
 
     def __init__(self, callback):
-        # type: (Callback) -> Call
+        # type: (Callback) -> Call[T]
         """Initialize a new asynchronous Call.
         The callback must have signature (resolve, reject), which are two callback functions of their own; the first one
         is to be called with the resulting value, while the second one is to be called with an error.
@@ -35,12 +30,12 @@ class Call:
         :param callback: Callback function. Must have (resolve, reject) functions."""
         self.status = self.PENDING
         self.data = None  # type: T
-        self.error = None  # type: E
+        self.error = None  # type: Optional[E]
         self.t = Thread(target=callback, args=(self._on_resolve, self._on_rejected))
         self.t.start()
 
     def then(self, callback):
-        # type: (Thenable) -> Call
+        # type: (Thenable) -> Call[TT]
         """Chain callback, called with the resolved value of the previous Call.
 
         :param callback: Callback function to be called with the resolved value of the current Call."""
@@ -95,7 +90,7 @@ class Call:
 
     @classmethod
     def resolve(cls, value=None):
-        # type: (Optional[T]) -> Call
+        # type: (TT) -> Call[TT]
         """Create a Call that immediately resolves with the value
 
         :param value: Value to be resolved to"""
@@ -103,7 +98,7 @@ class Call:
 
     @classmethod
     def reject(cls, error):
-        # type: (E) -> Call
+        # type: (E) -> Call[None]
         """Create a Call that immediately rejects with the error
 
         :param error: Error to be passed. If not an exception, will be turned into one."""
@@ -113,7 +108,7 @@ class Call:
 
     @classmethod
     def all(cls, calls):
-        # type: (Iterable[Call]) -> Call
+        # type: (Iterable[Call[TT]]) -> Call[List[TT]]
         """Resolve a list of calls' resolved values, or fail with the first exception
 
         :param calls: List of calls to resolve, in the same order than the Calls list"""
@@ -131,7 +126,7 @@ class Call:
 
     @classmethod
     def from_function(cls, func, *args, **kwargs):
-        # type: (Callable[[Any], T], *Any, **Any) -> Call
+        # type: (Callable[[Any], TT], *Any, **Any) -> Call[TT]
         """Create a Call from a synchronous function. The function will then be called asynchronously, its return
         value used as the resolved value, and any exception raised as a reject error value.
 
