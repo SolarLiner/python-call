@@ -76,7 +76,7 @@ dist-test:
       -u $PIP_UPLOAD_USER
       -p $PIP_UPLOAD_TEST_PASSWD
   except:
-    - master
+  - tags
 
 dist:
   stage: dist
@@ -90,7 +90,7 @@ dist:
   script:
     - twine upload dist/*.whl -u $PIP_UPLOAD_USER -p $PIP_UPLOAD_PASSWD
   only:
-    - master
+  - tags
 pages:
   stage: dist
   dependencies:
