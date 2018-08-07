@@ -1,4 +1,4 @@
-from distutils.core import setup
+from setuptools import setup
 
 setup(
     name='call',
@@ -8,5 +8,5 @@ setup(
     license='MIT',
     author='Nathan Graule',
     author_email='solarliner@gmail.com',
-    description='Thread-based, JS-like asynchronous calls for Python.'
+    description='A thread-based, JS-like asynchronous calls for Python.'
 )
