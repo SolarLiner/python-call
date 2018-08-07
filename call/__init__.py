@@ -1,5 +1,5 @@
 from threading import Thread
-from typing import Callable, Any, TypeVar
+from typing import Callable, Any, TypeVar, Optional
 
 __all__ = ['Call']
 
@@ -102,6 +102,23 @@ class Call:
         if not isinstance(error, Exception):
             error = Exception(error)
         return Call(lambda res, rej: rej(error))
+
+    @classmethod
+    def from_function(cls, func, *args, **kwargs):
+        # type: (Callable[[Any], T], *Any, **Any) -> Call
+        """Create a Call from a synchronous function. The function will then be called asynchronously, its return
+        value used as the resolved value, and any exception raised as a reject error value.
+
+        :param func: Synchronous function to be called
+        :param args: Positional arguments to be passed to the function func
+        :param kwargs: Dictionary arguments to be passed to the function func"""
+        def cb(resolve, reject):
+            # type: (Callable, Callable) -> None
+            try:
+                resolve(func(*args, **kwargs))
+            except Exception as e:
+                reject(e)
+        return Call(cb)
 
     def _on_resolve(self, data):
         # type: (T) -> None
