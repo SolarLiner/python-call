@@ -1,5 +1,13 @@
 image: python:3.7-alpine
 
+cache:
+  key: $CI_COMMIT_REF
+  paths:
+    - .cache
+
+variables:
+  PIP_DOWNLOAD_CACHE: .cache
+
 stages:
   - build
   - dist
