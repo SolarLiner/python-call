@@ -63,7 +63,8 @@ Block thread until resolved (or raises on failure):
 
     result = call.wait()
 
-Wait for call to either resolve or reject
+Wait for call to either resolve or reject. Note that it is not recommended to get the data directly, as it may be
+``None``, which may or may not indicate that an error has occurred.
 
 .. code:: python
 
