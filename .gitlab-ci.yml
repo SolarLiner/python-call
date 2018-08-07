@@ -70,7 +70,7 @@ dist-test:
   before_script:
     - pip install twine
   script:
-    - twine upload *.whl --repository-url https://test.pypi.org/legacy/
+    - twine upload dist/*.whl --repository-url https://test.pypi.org/legacy/ -u $PIP_USER -p $PIP_PASSWD
 
 pages:
   stage: dist
