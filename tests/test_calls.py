@@ -1,7 +1,10 @@
+from __future__ import print_function
+
 import json
 import os
 import time
 import unittest
+
 from call import Call
 
 
@@ -69,9 +72,9 @@ class TestCall(unittest.TestCase):
                     rej('File not readable')
                 res(f.read())
 
-        call = Call(cb)\
-            .then(lambda data: json.loads(data))\
-            .then(lambda data: data['app-id'])\
+        call = Call(cb) \
+            .then(lambda data: json.loads(data)) \
+            .then(lambda data: data['app-id']) \
             .catch(lambda err: err)
         call.then(print)
         try:
