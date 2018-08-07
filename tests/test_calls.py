@@ -90,10 +90,12 @@ class TestCall(unittest.TestCase):
         calls = []
         for i in range(10):
             def func():
+                _i = i
                 time.sleep(2 + random.random())
-                return i
+                return _i
 
             calls.append(Call.from_function(func))
+            time.sleep(.2)  # Wait before going to next iteration
 
         results = Call.all(calls).wait()
         for i in range(10):
