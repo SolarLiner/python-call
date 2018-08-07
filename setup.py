@@ -23,7 +23,7 @@ def test_suite():
 
 setup(
     name='async-call',
-    version='0.1.1',
+    version='0.1.2',
     packages=['call'],
     url='https://gitlab.com/solarliner/call',
     license='MIT',
