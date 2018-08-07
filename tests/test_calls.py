@@ -66,23 +66,22 @@ class TestCall(unittest.TestCase):
             call.wait()
             self.fail('Call should fail')
 
-    def test_realworld_example(self):
-        def cb(res, rej):
+    def test_real_world_example(self):
+        def cb(res, _):
             with open(os.path.join(os.path.dirname(__file__), 'data.json')) as f:
                 res(f.read())
 
         call = Call(cb) \
             .then(lambda data: json.loads(data)) \
             .then(lambda data: data['app-id']) \
-            .catch(lambda err: err)
+            .catch(lambda err: 'Whoops')
         call.then(print)
         try:
             value = call.wait()
-        except Exception as e:
-            self.fail('Call.wait shouldn\'t throw as it is being caught')
+        except Exception:
+            self.fail('Call.wait shouldn\'t throw as it is being caught in the chain')
 
-        self.assertIsNone(value)
-        self.assertTrue(isinstance(value, Exception))
+        self.assertEqual(value, 'Whoops')
 
     def test_all(self):
         calls = []
