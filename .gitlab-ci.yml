@@ -54,7 +54,7 @@ test:py3:
   before_script:
     - pip install nose coverage
   script:
-    - nosetests --with-coverage tests
+    - nosetests --with-coverage --cover-package=call tests
   artifacts:
     paths:
       - .coverage
