@@ -85,7 +85,7 @@ class Call:
         self.t.join()
 
     @classmethod
-    def resolve(cls, value):
+    def resolve(cls, value=None):
         # type: (Optional[T]) -> Call
         """Create a Call that immediately resolves with the value
 
