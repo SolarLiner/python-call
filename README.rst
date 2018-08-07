@@ -32,6 +32,11 @@ Create a call:
         
     call = Call(cb)
 
+Wrap a synchronous function in a Call:
+
+.. code:: python
+    call = Call.from_function(factorial, 10)
+
 Chain calls with the ``then`` keyword
 
 .. code:: python
