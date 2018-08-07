@@ -72,9 +72,9 @@ dist-test:
   script:
     - >
       twine upload dist/*.whl
-        --repository-url https://test.pypi.org/legacy/
-        -u $PIP_UPLOAD_USER
-        -p $PIP_UPLOAD_TEST_PASSWD
+      --repository-url https://test.pypi.org/legacy/
+      -u $PIP_UPLOAD_USER
+      -p $PIP_UPLOAD_TEST_PASSWD
 
 pages:
   stage: dist
