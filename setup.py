@@ -1,4 +1,12 @@
+import unittest
+
 from setuptools import setup
+
+
+def test_suite():
+    loader = unittest.TestLoader()
+    return loader.discover('tests', pattern='test_*.py')
+
 
 setup(
     name='call',
@@ -8,5 +16,6 @@ setup(
     license='MIT',
     author='Nathan Graule',
     author_email='solarliner@gmail.com',
-    description='A thread-based, JS-like asynchronous calls for Python.'
+    description='Thread-based, JS-like asynchronous calls for Python.',
+    test_suite='setup.test_suite'
 )
