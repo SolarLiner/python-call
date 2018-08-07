@@ -75,7 +75,22 @@ dist-test:
       --repository-url https://test.pypi.org/legacy/
       -u $PIP_UPLOAD_USER
       -p $PIP_UPLOAD_TEST_PASSWD
+  except:
+    - master
 
+dist:
+  stage: dist
+  dependencies:
+    - build:py2
+    - build:py3
+  variables:
+    GIT_STRATEGY: none
+  before_script:
+    - pip install twine
+  script:
+    - twine upload dist/*.whl -u $PIP_UPLOAD_USER -p $PIP_UPLOAD_PASSWD
+  only:
+    - master
 pages:
   stage: dist
   dependencies:
