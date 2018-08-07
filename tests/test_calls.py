@@ -66,7 +66,7 @@ class TestCall(unittest.TestCase):
             call.wait()
             self.fail('Call should fail')
 
-    def test_all_class(self):
+    def test_realworld_example(self):
         def cb(res, rej):
             with open(os.path.join(os.path.dirname(__file__), 'data.json')) as f:
                 if not f.readable():
