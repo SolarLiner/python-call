@@ -106,6 +106,8 @@ pages:
     paths:
       - public
     expire_in: 1 hour
+  only:
+  - develop
 
 codacy:
   stage: dist
